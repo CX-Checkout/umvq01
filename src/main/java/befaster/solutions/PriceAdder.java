@@ -1,67 +1,64 @@
 package befaster.solutions;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static befaster.solutions.SkuAdder.discounted;
-import static befaster.solutions.SkuAdder.simple;
-
-
 public class PriceAdder {
+	private final ImmutableMap<Character, Summer> summers;
+	
 	public static class Builder {
-		private final ImmutableMap.Builder<Character, SkuAdder> builder = new ImmutableMap.Builder();
+		private final ImmutableMap.Builder<Character, Summer> builder = new ImmutableMap.Builder();
 		
 		public Builder withPrice(char sku, int price) {
-			builder.put(sku, simple(price));
+			builder.put(sku, new Summer.SimpleSummer(sku, price));
 			return this;
 		}
 		
 		public Builder withDiscount(char sku, int price, int quantityForDiscount, int discountedCost) {
-			builder.put(sku, discounted(price, quantityForDiscount, discountedCost));
+			builder.put(sku, new Summer.DiscountSummer(sku, price, ImmutableList.of(new Discount(quantityForDiscount, discountedCost))));
+			return this;
+		}
+		
+		public Builder withDiscount(char sku, int price, int quantityForDiscount, int discountedCost, int quantityForDiscount1, int discountedCost1) {
+			builder.put(sku, new Summer.DiscountSummer(sku, price, ImmutableList.of(new Discount(quantityForDiscount, discountedCost), new Discount(quantityForDiscount1, discountedCost1))));
 			return this;
 		}
 		
 		public PriceAdder build() {
 			return new PriceAdder(builder.build());
 		}
+		
+		public Builder withFree(char sku, int price, int discountQuantity, char freeSku) {
+			builder.put(sku, new Summer.FreeSummer(sku, price, discountQuantity, freeSku));
+			return this;
+		}
 	}
 	
-	private final Map<Character, SkuAdder> adders;
-	
-	private int sum;
-	private boolean valid;
-	
-	public PriceAdder(Map<Character, SkuAdder> adders) {
-		this.adders = adders;
-		sum = 0;
-		valid = true;
-	}
+	private final Map<Character, Integer> counts = new HashMap<>();
 
+	public PriceAdder(ImmutableMap<Character, Summer> summers) {
+		this.summers = summers;
+	}
+	
 	public void add(char sku) {
-		if(!valid) {
-			return;
-		}
-		if(sum == -1) {
-			return;
-		}
-		SkuAdder skuAdder = adders.get(sku);
-		if(skuAdder == null) {
-			valid = false;
-		} else {
-			skuAdder.add();
-		}
+		int count = counts.getOrDefault(sku, 0);
+		count += 1;
+		counts.put(sku, count);
 	}
 
 	public int sum() {
-		if(!valid) {
-			return -1;
+		for(char sku: counts.keySet()) {
+			if(!summers.containsKey(sku)) {
+				return -1;
+			}
 		}
 		int sum = 0;
-		for (SkuAdder a: adders.values()) {
-			sum += a.sum();
+		for(Summer summer: summers.values()) {
+			sum += summer.sum(counts, summers);
 		}
 		return sum;
 	}
-
 }

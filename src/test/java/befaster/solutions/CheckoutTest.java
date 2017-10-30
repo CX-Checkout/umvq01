@@ -37,5 +37,12 @@ public class CheckoutTest {
 		assertThat(App.checkout("AAA"), equalTo(130));
 		assertThat(App.checkout("BB"), equalTo(45));
 		assertThat(App.checkout("BACDDCABAA"), equalTo(295));
+		assertThat(App.checkout("AAAAA"), equalTo(200));
+		assertThat(App.checkout("AAAAAAAAAAAAAAA"), equalTo(600));
+	}
+	
+	@Test
+	public void free_discount() {
+		assertThat(App.checkout("EBE"), equalTo(80));
 	}
 }
