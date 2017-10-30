@@ -21,7 +21,7 @@ public class App {
 				.withDiscount('H', 10, 5, 45, 10, 80)
 				.withPrice('I', 35)
 				.withPrice('J', 60)
-				.withDiscount('K', 80, 2, 150)
+				.withDiscount('K', 70, 2, 150)
 				.withPrice('L', 90)
 				.withPrice('M', 15)
 				.withFree('N', 40, 3, 'M')
@@ -34,9 +34,10 @@ public class App {
 				.withFree('U', 40, 3, 'U')
 				.withDiscount('V', 50, 2, 90, 3, 130)
 				.withPrice('W', 20)
-				.withPrice('X', 90)
-				.withPrice('Y', 10)
-				.withPrice('Z', 50)
+				.withPrice('X', 17)
+				.withPrice('Y', 20)
+				.withPrice('Z', 21)
+				.withGroup(3, 45, 'S', 'T', 'X', 'Y', 'Z')
 				.build();
 	}
 }

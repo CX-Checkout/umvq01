@@ -31,6 +31,14 @@ public interface Summer {
 		protected int sum(int count) {
 			return count * price;
 		}
+		
+		public int getPrice() {
+			return price;
+		}
+		
+		public char getSku() {
+			return sku;
+		}
 	}
 	
 	class DiscountSummer extends SimpleSummer {
