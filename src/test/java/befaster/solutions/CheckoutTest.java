@@ -29,7 +29,7 @@ public class CheckoutTest {
 	
 	@Test
 	public void invalid_basket() {
-		assertThat(App.checkout("BU"), equalTo(-1));
+		assertThat(App.checkout("1"), equalTo(-1));
 	}
 	
 	@Test
