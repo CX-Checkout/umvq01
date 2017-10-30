@@ -1,11 +1,5 @@
 package befaster.solutions;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 public interface SkuAdder {
 	public interface simple {
 
@@ -20,11 +14,7 @@ public interface SkuAdder {
 	}
 	
 	static SkuAdder discounted(int price, int discountQuantity, int discountPrice) {
-		return new DiscountSkuAdder(price, ImmutableList.of(new DiscountSkuAdder.Discount(discountQuantity, discountPrice)));
-	}
-	
-	static SkuAdder discounted(int price, int discountQuantity, int discountPrice, int discountQuantity1, int discountPrice1) {
-		return new DiscountSkuAdder(price, ImmutableList.of(new DiscountSkuAdder.Discount(discountQuantity, discountPrice), new DiscountSkuAdder.Discount(discountQuantity1, discountPrice1)));
+		return new DiscountSkuAdder(price, discountQuantity, discountPrice);
 	}
 	
 	static SkuAdder free(int price, int discountQuantity, SkuAdder skuAdder) {
@@ -52,41 +42,21 @@ public interface SkuAdder {
 
 		@Override
 		public void remove() {
-			if(sum > 0) {
-				sum -= price;
-			}
+			sum -= price;
 		}
 	}
 	
 	class DiscountSkuAdder implements SkuAdder {
-		public static class Discount {
-			private final int discountQuantity;
-			private final int discountPrice;
-			
-			public Discount(int discountQuantity, int discountPrice) {
-				this.discountQuantity = discountQuantity;
-				this.discountPrice = discountPrice;
-			}
-			
-			public int getDiscountQuantity() {
-				return discountQuantity;
-			}
-			
-			public int getDiscountPrice() {
-				return discountPrice;
-			}
-		}
 		private final int price;
-		private final List<Discount> discounts;
+		private final int discountQuantity;
+		private final int discountPrice;
 		
 		private int count;
 		
-		public DiscountSkuAdder(int price, List<Discount> discounts) {
+		public DiscountSkuAdder(int price, int discountQuantity, int discountPrice) {
 			this.price = price;
-			//need to reverse sort
-			
-			this.discounts = new ArrayList<>(discounts);
-			this.discounts.sort(Comparator.comparingInt(d -> -d.getDiscountQuantity()));
+			this.discountQuantity = discountQuantity;
+			this.discountPrice = discountPrice;
 		}
 		
 		@Override
@@ -96,25 +66,14 @@ public interface SkuAdder {
 	
 		@Override
 		public int sum() {
-			int count = this.count;
-			int sum = 0;
-			for(Discount discount: discounts) {
-				if(count == 0) {
-					break;
-				}
-				int discountMultiplier = count / discount.discountQuantity;
-				sum += discountMultiplier * discount.getDiscountPrice();
-				count = count % discount.getDiscountQuantity();
-			}
-			
-			return sum + count * price;
+			int discountMultiplier = count / discountQuantity;
+			int discountRemainder = count % discountQuantity;
+			return discountMultiplier * discountPrice + discountRemainder * price;
 		}
 
 		@Override
 		public void remove() {
-			if(count > 0) {
-				count -= 1;
-			}
+			count -= 1;
 		}
 	}
 	
@@ -134,14 +93,18 @@ public interface SkuAdder {
 		public void add() {
 			super.add();
 			count += 1;
+			if(count % discountQuantity == 0) {
+				skuAdder.remove();
+			}
 		}
 		
 		@Override
 		public void remove() {
 			super.remove();
-			if(count > 0) {
-				count -= 1;
+			if(count % discountQuantity != 0) {
+				skuAdder.remove();
 			}
+			count -= 1;
 		}
 	}
 }

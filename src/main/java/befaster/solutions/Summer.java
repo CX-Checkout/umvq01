@@ -31,14 +31,6 @@ public interface Summer {
 		protected int sum(int count) {
 			return count * price;
 		}
-		
-		public int getPrice() {
-			return price;
-		}
-		
-		public char getSku() {
-			return sku;
-		}
 	}
 	
 	class DiscountSummer extends SimpleSummer {
@@ -91,6 +83,22 @@ public interface Summer {
 			copy.put(freeSku, count);
 			int mod = summer.sum(copy, summers);
 			return sum + mod - original;
+		}
+	}
+	
+	class SelfFreeSummer extends SimpleSummer {
+		private final int discountQuantity;
+
+		public SelfFreeSummer(char sku, int price, int discountQuantity) {
+			super(sku, price);
+			this.discountQuantity = discountQuantity;
+		}
+		
+		@Override
+		public int sum(Map<Character, Integer> counts, Map<Character, Summer> summers) {
+			int count = count(counts);
+			int freeCount = count / (discountQuantity + 1);
+			return sum(count - freeCount);
 		}
 	}
 }

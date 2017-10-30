@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 public class SummerTest {
 
@@ -25,5 +24,6 @@ public class SummerTest {
 	public void free() {
 		assertThat(new Summer.FreeSummer('A', 50, 2, 'B').sum(ImmutableMap.of('A', 2, 'B', 1), ImmutableMap.of('B', new Summer.SimpleSummer('B', 30))), equalTo(70));
 		assertThat(new Summer.FreeSummer('A', 50, 2, 'B').sum(ImmutableMap.of('A', 2), ImmutableMap.of('B', new Summer.SimpleSummer('B', 30))), equalTo(100));
+		assertThat(new Summer.SelfFreeSummer('A', 50, 2).sum(ImmutableMap.of('A', 3), ImmutableMap.of()), equalTo(100));
 	}
 }

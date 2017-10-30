@@ -44,5 +44,6 @@ public class CheckoutTest {
 	@Test
 	public void free_discount() {
 		assertThat(App.checkout("EBE"), equalTo(80));
+		assertThat(App.checkout("FFF"), equalTo(20));
 	}
 }

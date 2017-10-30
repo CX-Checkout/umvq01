@@ -32,7 +32,11 @@ public class PriceAdder {
 		}
 		
 		public Builder withFree(char sku, int price, int discountQuantity, char freeSku) {
-			builder.put(sku, new Summer.FreeSummer(sku, price, discountQuantity, freeSku));
+			if(sku == freeSku) {
+				builder.put(sku, new Summer.SelfFreeSummer(sku, price, discountQuantity));
+			} else {
+				builder.put(sku, new Summer.FreeSummer(sku, price, discountQuantity, freeSku));
+			}
 			return this;
 		}
 	}

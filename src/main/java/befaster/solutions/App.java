@@ -16,6 +16,7 @@ public class App {
 				.withPrice('C', 20)
 				.withPrice('D', 15)
 				.withFree('E', 40, 2, 'B')
+				.withFree('F', 10, 2, 'F')
 				.build();
 	}
 }
